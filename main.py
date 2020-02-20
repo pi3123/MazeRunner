@@ -1,75 +1,69 @@
 import pygame
 import numpy as np
+from Tiles import helpers
+from Tiles import Cell
 
 W = 50
 WIDTH = 1000
 HEIGHT = 1000
 WINDOW_SIZE = [WIDTH, HEIGHT]
-cols = int(WIDTH / W)
 rows = int(HEIGHT / W)
+cols = int(WIDTH / W)
 WHITE = (255, 255, 255)
-
+stack = []
 grid = np.zeros((rows, cols), dtype=object)
 
 pygame.init()
 screen = pygame.display.set_mode(WINDOW_SIZE)
 pygame.display.set_caption("Maze")
-screen.fill((90, 90, 90))
+screen.fill((30, 30, 30))
+pygame.display.update()
 clock = pygame.time.Clock()
-
-
-class Cell:
-
-    def __init__(self, x, y, w):
-        self.x = x
-        self.y = y
-        self.walls = [True, True, True, True]
-
-    def show(self):
-        x = self.x * W
-        y = self.y * W
-        if self.walls[0]:
-            pygame.draw.line(
-                screen,
-                WHITE,
-                (x, y), (x + W, y))
-
-        if self.walls[1]:
-            pygame.draw.line(
-                screen,
-                WHITE,
-                (x + W, y), (x + W, y + W))
-
-        if self.walls[2]:
-            pygame.draw.line(
-                screen,
-                WHITE,
-                (x + W, y + W), (x, y + W)
-            )
-
-        if self.walls[3]:
-            pygame.draw.line(
-                screen,
-                WHITE,
-                (x, y + W), (x, y)
-            )
-
 
 for x in range(rows):
     for y in range(cols):
-        cell = Cell(x, y, W)
+        cell = Cell.Cell(x, y, grid, w=W)
         grid[x, y] = cell
+current = grid[0, 0]
 
 
-def draw():
+def draw(arr):
     for row in range(rows):
         for col in range(cols):
-            grid[row, col].show()
+            arr[row, col].show(screen)
+    pygame.display.update()
 
 
-while True:
+def Evolve():
+    global current
+    current.visited = True
+    Next = current.getNeighbor(grid)
+    if Next != -1:
+        Next.visited = True
+        stack.append(current)
+
+        helpers.breakWall(current, Next)
+        current = Next
+
+    elif len(stack) > 0:
+        current = stack.pop()
+
+
+done = False
+while not done:
+    Evolve()
+    draw(grid)
     clock.tick(60)
+
+    if len(stack) == 0:
+        np.save("maze", grid, allow_pickle=True)
+        pygame.quit()
+        print("maze made and stored")
+        break
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
+            np.save("maze", grid, allow_pickle=True)
             pygame.quit()
-            break
+            print("maze made and stored")
+
+
