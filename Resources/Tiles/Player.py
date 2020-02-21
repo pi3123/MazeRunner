@@ -1,6 +1,6 @@
 import numpy as np
 import pygame
-from Resources import config
+from Resources import helpers
 
 '''
 top = helpers.index(grid, self.x, self.y - 1, rows, cols)
@@ -16,9 +16,10 @@ class Player:
         self.color = color
         self.W = grid[0, 0].W
 
-        # self.x = np.random.randint(0, grid.shape[0])
-        self.x = 0
+        self.x = np.random.randint(0, grid.shape[0])
         self.y = 0
+        self.done = False
+        self.reward = grid[self.x, self.y].reward
 
     def step(self, choice):
         if choice == 0:
@@ -33,6 +34,11 @@ class Player:
         elif choice == 3:
             if self.possible(self.grid, choice):
                 self.x -= 1
+
+        self.reward = helpers.getReward(self.grid, self.x, self.y)
+        if self.reward != 0:
+            self.done = True
+        return (self.x, self.y), self.reward, self.done
 
     def render(self, screen):
         pygame.draw.rect(

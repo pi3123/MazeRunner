@@ -1,3 +1,7 @@
+from Resources import config
+import pygame
+
+
 def index(grid, i, j, rows, cols):
     if i < 0 or j < 0 or i > cols - 1 or j > rows - 1:
         a = -1
@@ -23,3 +27,12 @@ def breakWall(a, b):
         a.walls[2] = False
         b.walls[0] = False
 
+
+def getReward(grid, x, y):
+    return grid[x, y].reward
+
+def drawMaze(arr,screen):
+    for row in range(config.rows):
+        for col in range(config.cols):
+            arr[row, col].render(screen)
+    pygame.display.update()
