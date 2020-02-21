@@ -1,7 +1,8 @@
 import numpy as np
 import pygame
+from Resources import config
 
-grid = np.load("maze.npy", allow_pickle= True)
+grid = np.load(config.OUTPUT_FILE, allow_pickle= True)
 rows = grid.shape[0]
 cols = grid.shape[0]
 
@@ -13,7 +14,7 @@ pygame.display.set_caption("Test")
 while True:
     for row in range(rows):
         for col in range(cols):
-            grid[row, col].show(screen)
+            grid[row, col].render(screen)
     pygame.display.update()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

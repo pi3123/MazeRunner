@@ -1,6 +1,3 @@
-import numpy as np
-
-
 def index(grid, i, j, rows, cols):
     if i < 0 or j < 0 or i > cols - 1 or j > rows - 1:
         a = -1
@@ -25,3 +22,4 @@ def breakWall(a, b):
     elif bar == -1:
         a.walls[2] = False
         b.walls[0] = False
+

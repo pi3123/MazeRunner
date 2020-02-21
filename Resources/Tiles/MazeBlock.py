@@ -1,11 +1,9 @@
-from typing import Any, Union
-
 import pygame
 import random
-from Tiles import helpers
+from Resources import helpers
 
 
-class Cell:
+class MazeBlock:
     def __init__(self, i, j, grid, color=(180, 0, 0), w=50):
         self.x = i
         self.y = j
@@ -15,6 +13,10 @@ class Cell:
         self.color = color
         self.grid = grid
         self.W = w
+        self.reward = 0
+
+        if color == (255, 255, 0):
+            self.reward = 1
 
     def getNeighbor(self, grid):
         n = []
@@ -48,10 +50,11 @@ class Cell:
         else:
             return -1
 
-    def show(self, screen):
+    def render(self, screen):
         x = self.x * self.W
         y = self.y * self.W
-
+        if self.reward == 1:
+            self.color = (255, 255, 0)
         if self.visited:
             pygame.draw.rect(
                 screen,
@@ -64,7 +67,7 @@ class Cell:
                 screen,
                 (255, 255, 255),
                 (x, y), (x + self.W, y),
-                2
+                5
             )
 
         if self.walls[1]:
@@ -72,7 +75,7 @@ class Cell:
                 screen,
                 (255, 255, 255),
                 (x + self.W, y), (x + self.W, y + self.W),
-                2
+                5
             )
 
         if self.walls[2]:
@@ -80,7 +83,7 @@ class Cell:
                 screen,
                 (255, 255, 255),
                 (x + self.W, y + self.W), (x, y + self.W),
-                2
+                5
             )
 
         if self.walls[3]:
@@ -88,5 +91,5 @@ class Cell:
                 screen,
                 (255, 255, 255),
                 (x, y + self.W), (x, y),
-                2
+                5
             )
