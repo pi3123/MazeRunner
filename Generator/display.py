@@ -18,4 +18,8 @@ while True:
     pygame.display.update()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
+            print(grid[grid.shape[0] - 1, grid.shape[1] - 1].reward)
             pygame.quit()
+
+
+

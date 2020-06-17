@@ -1,27 +1,19 @@
-import numpy as np
 import pygame
-from Resources import helpers
-
-'''
-top = helpers.index(grid, self.x, self.y - 1, rows, cols)
-right = helpers.index(grid, self.x + 1, self.y, rows, cols)
-bottom = helpers.index(grid, self.x, self.y + 1, rows, cols)
-left = helpers.index(grid, self.x - 1, self.y, rows, cols)
-'''
-
 
 class Player:
-    def __init__(self, grid, color=(0, 180, 0)):
+    def __init__(self, grid, color=(0, 180, 0), x = 0, y = 0):
         self.grid = grid
         self.color = color
         self.W = grid[0, 0].W
-
-        self.x = np.random.randint(0, grid.shape[0])
-        self.y = 0
+        self.x = x
+        self.y = y
         self.done = False
         self.reward = grid[self.x, self.y].reward
 
     def step(self, choice):
+
+        """ Takes a step based on the input, if its possible(If there isn't a wall """
+
         if choice == 0:
             if self.possible(self.grid, choice):
                 self.y -= 1
@@ -35,12 +27,16 @@ class Player:
             if self.possible(self.grid, choice):
                 self.x -= 1
 
-        self.reward = helpers.getReward(self.grid, self.x, self.y)
-        if self.reward != 0:
+        self.reward = self.grid[self.x, self.y].reward
+        if self.reward == 1:
             self.done = True
+
         return (self.x, self.y), self.reward, self.done
 
     def render(self, screen):
+
+        """ Draws that cell on the grid """
+
         pygame.draw.rect(
             screen,
             self.color,
@@ -48,7 +44,17 @@ class Player:
         )
 
     def possible(self, grid, choice):
+
+        """ Checks if a move is possible (If there isn't a wall) """
+
         if not grid[self.x, self.y].walls[choice]:
             return True
         else:
             return False
+
+    def __sub__(self, other):
+
+        """ Subtraction overloading"""
+
+        return other.x - self.x, other.y - self.y
+
